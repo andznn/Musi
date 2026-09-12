@@ -1,0 +1,732 @@
+﻿<Window x:Class="SpotifyMiniPlayer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="486"
+        Height="160"
+        Title="Musi"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="True"
+        Background="Transparent"
+        AllowsTransparency="True">
+    <Window.ContextMenu>
+        <ContextMenu>
+
+            <MenuItem Header="Show player"
+                  Click="ContextMenuShowPlayer_Click"/>
+
+            <MenuItem Header="Hide player"
+                  Click="ContextMenuHidePlayer_Click"/>
+
+            <MenuItem Header="Open Spotify"
+                  Click="ContextMenuOpenSpotify_Click"/>
+
+            <MenuItem x:Name="WindowAlwaysOnTopItem"
+      Header="Always on top"
+      IsCheckable="True"
+      IsChecked="True"
+      Click="AlwaysOnTopMenuItem_Click"/>
+
+            <MenuItem x:Name="WindowStartWithWindowsItem"
+      Header="Start with Windows"
+      IsCheckable="True"
+      IsChecked="False"
+      Click="StartWithWindowsMenuItem_Click"/>
+
+            <MenuItem Header="Log out of Spotify"
+      Click="LogoutSpotifyMenuItem_Click"/>
+
+            <Separator/>
+
+            <MenuItem Header="Quit Musi"
+                  Click="ContextMenuQuit_Click"/>
+
+        </ContextMenu>
+    </Window.ContextMenu>
+
+    <Window.Resources>
+
+        <!-- ================================= -->
+        <!-- CONTROL BUTTON -->
+        <!-- ================================= -->
+
+        <Style x:Key="ControlButton"
+               TargetType="Button">
+
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#8E8E8E"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform
+                        ScaleX="1"
+                        ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="ButtonBackground"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="10">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="ButtonBackground"
+                                        Property="Background"
+                                        Value="#252525"/>
+
+                                <Setter Property="Foreground"
+                                        Value="White"/>
+
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                To="1.08"
+                                                Duration="0:0:0.12"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                To="1.08"
+                                                Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                To="1"
+                                                Duration="0:0:0.12"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
+                                <Setter TargetName="ButtonBackground"
+                                        Property="Background"
+                                        Value="#303030"/>
+
+                            </Trigger>
+
+
+                            <!-- DISABLED -->
+
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+
+                                <Setter Property="Opacity"
+                                        Value="0.28"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+
+        <!-- ================================= -->
+        <!-- PLAY / PAUSE -->
+        <!-- ================================= -->
+
+        <Style x:Key="PlayButton"
+               TargetType="Button">
+
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#111111"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="RenderTransformOrigin"
+                    Value="0.5,0.5"/>
+
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform
+                        ScaleX="1"
+                        ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Template">
+
+                <Setter.Value>
+
+                    <ControlTemplate TargetType="Button">
+
+                        <Border x:Name="PlayBackground"
+                                Width="44"
+                                Height="44"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="22">
+
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+
+                                <Setter TargetName="PlayBackground"
+                                        Property="Background"
+                                        Value="#E5E5E5"/>
+
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                To="1.06"
+                                                Duration="0:0:0.12"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                To="1.06"
+                                                Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleX)"
+                                                To="1"
+                                                Duration="0:0:0.12"/>
+                                            <DoubleAnimation
+                                                Storyboard.TargetProperty="RenderTransform.(ScaleTransform.ScaleY)"
+                                                To="1"
+                                                Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+
+                            </Trigger>
+
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+
+                                <Setter TargetName="PlayBackground"
+                                        Property="Background"
+                                        Value="#CFCFCF"/>
+
+                            </Trigger>
+
+
+                            <!-- DISABLED -->
+
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+
+                                <Setter Property="Opacity"
+                                        Value="0.45"/>
+
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+
+                    </ControlTemplate>
+
+                </Setter.Value>
+
+            </Setter>
+
+        </Style>
+
+    </Window.Resources>
+
+
+    <!-- ================================= -->
+    <!-- MAIN CONTAINER -->
+    <!-- ================================= -->
+
+
+    <Border x:Name="MainContainer"
+            Width="430"
+            Height="104"
+            Margin="28"
+            Background="#151515"
+            CornerRadius="50"
+            Padding="14"
+            Opacity="1">
+
+        <!-- ================================= -->
+        <!-- PLAYER HOVER -->
+        <!-- ================================= -->
+
+        <Border.Triggers>
+
+            <EventTrigger RoutedEvent="MouseEnter">
+
+                <BeginStoryboard>
+
+                    <Storyboard>
+
+                        <ColorAnimation
+                            Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
+                            To="#171717"
+                            Duration="0:0:0.15"/>
+
+                    </Storyboard>
+
+                </BeginStoryboard>
+
+            </EventTrigger>
+
+
+            <EventTrigger RoutedEvent="MouseLeave">
+
+                <BeginStoryboard>
+
+                    <Storyboard>
+
+                        <ColorAnimation
+                            Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"
+                            To="#151515"
+                            Duration="0:0:0.15"/>
+
+                    </Storyboard>
+
+                </BeginStoryboard>
+
+            </EventTrigger>
+
+        </Border.Triggers>
+
+
+        <!-- ================================= -->
+        <!-- TRANSFORM -->
+        <!-- ================================= -->
+
+        <Border.RenderTransform>
+
+            <TranslateTransform
+                x:Name="MainContainerTransform"
+                X="0"
+                Y="0"/>
+
+        </Border.RenderTransform>
+
+
+        <!-- ================================= -->
+        <!-- SHADOW -->
+        <!-- ================================= -->
+
+        <Border.Effect>
+
+            <DropShadowEffect
+                BlurRadius="24"
+                ShadowDepth="5"
+                Opacity="0.5"/>
+
+        </Border.Effect>
+
+
+        <!-- ================================= -->
+        <!-- CONTENT -->
+        <!-- ================================= -->
+
+        <Grid>
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="76"/>
+
+                <ColumnDefinition Width="*"/>
+
+                <ColumnDefinition Width="126"/>
+
+            </Grid.ColumnDefinitions>
+
+
+            <!-- ================================= -->
+            <!-- VINYL RECORD -->
+            <!-- ================================= -->
+
+            <Grid Grid.Column="0"
+                  Width="76"
+                  Height="76"
+                  VerticalAlignment="Center"
+                  RenderTransformOrigin="0.5,0.5"
+                  Cursor="Hand"
+                  MouseLeftButtonDown="Vinyl_MouseLeftButtonDown"
+                  MouseLeftButtonUp="Vinyl_MouseLeftButtonUp">
+
+                <Grid.RenderTransform>
+
+                    <TransformGroup>
+
+                        <RotateTransform
+                            x:Name="VinylRotation"
+                            Angle="0"/>
+
+                        <ScaleTransform
+                            x:Name="VinylScale"
+                            ScaleX="1"
+                            ScaleY="1"/>
+
+                    </TransformGroup>
+
+                </Grid.RenderTransform>
+
+
+                <Grid.Triggers>
+
+                    <EventTrigger RoutedEvent="MouseEnter">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="VinylScale"
+                                    Storyboard.TargetProperty="ScaleX"
+                                    To="1.08"
+                                    Duration="0:0:0.12"/>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="VinylScale"
+                                    Storyboard.TargetProperty="ScaleY"
+                                    To="1.08"
+                                    Duration="0:0:0.12"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+
+                    <EventTrigger RoutedEvent="MouseLeave">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="VinylScale"
+                                    Storyboard.TargetProperty="ScaleX"
+                                    To="1"
+                                    Duration="0:0:0.12"/>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="VinylScale"
+                                    Storyboard.TargetProperty="ScaleY"
+                                    To="1"
+                                    Duration="0:0:0.12"/>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+
+                </Grid.Triggers>
+
+
+                <!-- VINYL -->
+
+                <Ellipse
+                    Width="76"
+                    Height="76"
+                    Fill="#070707"/>
+
+
+                <!-- GROOVES -->
+
+                <Ellipse
+                    Width="72"
+                    Height="72"
+                    Stroke="#191919"
+                    StrokeThickness="1"/>
+
+                <Ellipse
+                    Width="66"
+                    Height="66"
+                    Stroke="#202020"
+                    StrokeThickness="1"/>
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#181818"
+                    StrokeThickness="1"/>
+
+
+                <!-- ALBUM ART -->
+
+                <Ellipse
+                    Width="58"
+                    Height="58">
+
+                    <Ellipse.Fill>
+
+                        <ImageBrush
+                            x:Name="AlbumCoverBrush"
+                            Stretch="UniformToFill"/>
+
+                    </Ellipse.Fill>
+
+                </Ellipse>
+
+
+                <!-- CENTER LABEL -->
+
+                <Ellipse
+                    Width="16"
+                    Height="16"
+                    Fill="#151515"/>
+
+                <Ellipse
+                    Width="5"
+                    Height="5"
+                    Fill="#BDBDBD"/>
+
+
+                <!-- VINYL SHINE -->
+
+                <Ellipse
+                    Width="76"
+                    Height="76"
+                    Stroke="White"
+                    StrokeThickness="2"
+                    Opacity="0"
+                    IsHitTestVisible="False"/>
+
+            </Grid>
+
+
+            <!-- ================================= -->
+            <!-- SONG INFO -->
+            <!-- ================================= -->
+
+            <StackPanel Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Margin="15,0,10,0">
+
+                <Canvas x:Name="SongTitleContainer"
+                        Width="177"
+                        Height="22"
+                        ClipToBounds="True">
+
+                    <TextBlock x:Name="SongTitle"
+                               Text="Spotify disconnected"
+                               Foreground="White"
+                               FontFamily="Segoe UI"
+                               FontSize="15"
+                               FontWeight="SemiBold"
+                               TextWrapping="NoWrap"
+                               TextTrimming="None"
+                               Canvas.Left="0"
+                               Canvas.Top="0"/>
+
+                </Canvas>
+
+                <TextBlock x:Name="ArtistName"
+                           Text="Connect your Spotify account"
+                           Foreground="#858585"
+                           FontFamily="Segoe UI"
+                           FontSize="12"
+                           Margin="0,5,0,0"
+                           TextTrimming="CharacterEllipsis"/>
+
+                <Button x:Name="ConnectButton"
+                        Content="Connect Spotify"
+                        Click="ConnectButton_Click"
+                        Foreground="White"
+                        Background="#1DB954"
+                        BorderThickness="0"
+                        FontSize="10"
+                        FontWeight="SemiBold"
+                        Padding="12,5"
+                        HorizontalAlignment="Left"
+                        Margin="0,7,0,0"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ConnectBackground"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="11"
+                                Padding="{TemplateBinding Padding}">
+                                <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ConnectBackground"
+                                        Property="Background"
+                                        Value="#1ED760"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ConnectBackground"
+                                        Property="Background"
+                                        Value="#18A84B"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.35"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+            </StackPanel>
+
+
+            <!-- ================================= -->
+            <!-- CONTROLS -->
+            <!-- ================================= -->
+
+            <StackPanel Grid.Column="2"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right">
+
+
+                <!-- BACK -->
+
+                <Button x:Name="PreviousButton"
+                        IsEnabled="False"
+                        Click="PreviousButton_Click"
+                        Style="{StaticResource ControlButton}">
+
+                    <Path
+                        Data="M 18,10 L 10,20 L 18,30"
+                        Stroke="#8E8E8E"
+                        StrokeThickness="1.5"
+                        StrokeStartLineCap="Round"
+                        StrokeEndLineCap="Round"
+                        StrokeLineJoin="Round"
+                        Width="10"
+                        Height="18"
+                        Stretch="Uniform"/>
+
+                </Button>
+
+
+                <!-- PLAY / PAUSE -->
+
+                <Button x:Name="PlayPauseButton"
+                        IsEnabled="False"
+                        Click="PlayPauseButton_Click"
+                        Style="{StaticResource PlayButton}"
+                        Margin="3,0">
+
+                    <Grid
+                        Width="14"
+                        Height="16">
+
+
+                        <!-- PLAY -->
+
+                        <Path
+                            x:Name="PlayIcon"
+                            Data="M 0,0 L 0,16 L 14,8 Z"
+                            Fill="#111111"
+                            Width="14"
+                            Height="16"
+                            Stretch="Fill"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Visible"/>
+
+
+                        <!-- PAUSE -->
+
+                        <Grid
+                            x:Name="PauseIcon"
+                            Width="10"
+                            Height="14"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Visibility="Collapsed">
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="4"/>
+
+                                <ColumnDefinition Width="2"/>
+
+                                <ColumnDefinition Width="4"/>
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <Rectangle
+                                Grid.Column="0"
+                                Fill="#111111"
+                                RadiusX="1"
+                                RadiusY="1"/>
+
+                            <Rectangle
+                                Grid.Column="2"
+                                Fill="#111111"
+                                RadiusX="1"
+                                RadiusY="1"/>
+
+                        </Grid>
+
+                    </Grid>
+
+                </Button>
+
+
+                <!-- NEXT -->
+
+                <Button x:Name="NextButton"
+                        IsEnabled="False"
+                        Click="NextButton_Click"
+                        Style="{StaticResource ControlButton}">
+
+                    <Path
+                        Data="M 10,10 L 18,20 L 10,30"
+                        Stroke="#8E8E8E"
+                        StrokeThickness="1.5"
+                        StrokeStartLineCap="Round"
+                        StrokeEndLineCap="Round"
+                        StrokeLineJoin="Round"
+                        Width="10"
+                        Height="18"
+                        Stretch="Uniform"/>
+
+                </Button>
+
+            </StackPanel>
+
+        </Grid>
+
+    </Border>
+
+</Window>

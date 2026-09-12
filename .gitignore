@@ -1,0 +1,18 @@
+# Visual Studio
+Musi/.vs/
+Musi/**/bin/
+Musi/**/obj/
+*.user
+*.suo
+
+# Build / publish
+publish/
+
+# ReSharper / Rider
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# OS
+.DS_Store
+Thumbs.db
